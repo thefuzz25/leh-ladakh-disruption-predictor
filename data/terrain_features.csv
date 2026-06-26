@@ -1,0 +1,6 @@
+segment,elevation_m,slope_deg,aspect_deg,hazard_type
+Leh_city,3524,3,180,landslide
+Zoji_La,3528,28,270,avalanche
+Rohtang_Pass,3978,31,225,avalanche
+Khardung_La,5359,26,180,avalanche
+Manali,2050,12,90,landslide
