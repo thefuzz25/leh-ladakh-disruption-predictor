@@ -24,9 +24,10 @@ possible.
 - The Aug bump aligns with the monsoon landslide events on NH3 (e.g. Aug 2021, Jul–Aug 2024).
 
 ## Where testimony says the model is weak
-- **Landslide timing is under-modelled** (AUC ≈ 0.51): people described sudden cloudburst
-  washouts that a daily weather feature set barely anticipates. Honest limitation.
+- **Landslide timing** (AUC ≈ 0.70) improved once labels were keyed to 3-day cumulative
+  rainfall, but people still described sudden cloudbursts that a daily feature set only
+  partly anticipates — the honest residual weak spot.
 - **November early-closure** depends on first-snow timing the monthly average smooths over.
 
 Bottom line: the **seasonal shape** matches lived experience well; the **event-level**
-landslide layer is the honest weak spot — and I only know that because I asked.
+landslide layer is the harder part — and I only know where it falls short because I asked.

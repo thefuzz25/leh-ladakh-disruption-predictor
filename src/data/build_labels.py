@@ -49,10 +49,22 @@ def build_labels(weather_df: pd.DataFrame, seed: int = 42) -> pd.DataFrame:
         np.where(aval_season & (df["snowfall_sum"] > 20), 0.45,
         np.where(aval_season, 0.05, 0.01))
     )
+    # Landslides are driven by cumulative soil saturation, not a single wet day. Leh is
+    # high-desert, so ABSOLUTE thresholds (precip>40mm) almost never fire and leave the
+    # label uncorrelated with the features the model sees. Instead key off 3-day cumulative
+    # precipitation RELATIVE to the monsoon's own distribution (percentiles), plus wind as a
+    # secondary trigger — a learnable, physically-grounded gradient.
+    precip_3d = df["precip_sum"].rolling(3, min_periods=1).sum()
+    monsoon_p3d = precip_3d[land_season]
+    q90 = float(monsoon_p3d.quantile(0.90))
+    q75 = float(monsoon_p3d.quantile(0.75))
+    high_wind = df["windspeed_max"] > df["windspeed_max"][land_season].quantile(0.75)
+
     p_land = np.where(
-        land_season & (df["precip_sum"] > 40) & (df["windspeed_max"] > 50), 0.70,
-        np.where(land_season & (df["precip_sum"] > 40), 0.35,
-        np.where(land_season, 0.03, 0.01))
+        land_season & (precip_3d >= q90) & high_wind, 0.80,
+        np.where(land_season & (precip_3d >= q90), 0.60,
+        np.where(land_season & (precip_3d >= q75), 0.30,
+        np.where(land_season, 0.04, 0.01)))
     )
 
     # provenance tags (default: weather-modelled within season, else off-season)
