@@ -1,0 +1,13 @@
+# Offline pipeline (data fetch, labelling, training, evaluation, precompute).
+# Install with: pip install -r requirements-dev.txt
+pandas
+numpy
+scikit-learn
+xgboost
+shap
+matplotlib
+openmeteo-requests
+requests-cache
+retry-requests
+joblib
+numpy-financial

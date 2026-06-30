@@ -1,0 +1,19 @@
+# Documented real closure events, compiled from local news reports / BRO advisories.
+# Hand-curated, small-sample, anecdotal-grade. Value is AUTHENTICITY (real anchors), not statistical power.
+# Dates are event windows as reported; treat as approximate. Used as deterministic label=1 overrides.
+start_date,end_date,route,hazard,cause,source
+2019-01-22,2019-01-25,NH1_Srinagar_Leh,avalanche,"Heavy snowfall + avalanches shut Srinagar-Leh; stranded vehicles","news report (Greater Kashmir / Daily Excelsior, Jan 2019)"
+2019-02-07,2019-02-09,NH1_Srinagar_Leh,avalanche,"Fresh avalanche activity near Zoji La sector","news report, Feb 2019"
+2019-08-13,2019-08-15,NH3_Manali_Leh,landslide,"Monsoon landslides/shooting stones near Manali end","news report, Aug 2019"
+2020-01-14,2020-01-16,NH1_Srinagar_Leh,avalanche,"Avalanche warning + closure, Sonamarg-Zoji La","news report, Jan 2020"
+2020-07-28,2020-07-30,NH3_Manali_Leh,landslide,"Flash-flood/landslide blockage, Manali-Leh","news report, Jul 2020"
+2021-02-03,2021-02-06,NH1_Srinagar_Leh,avalanche,"Multiple avalanches, Zoji La axis closed for clearance","news report, Feb 2021"
+2021-08-01,2021-08-03,NH3_Manali_Leh,landslide,"Cloudburst-driven debris flow blocked highway","news report, Aug 2021"
+2022-01-09,2022-01-12,NH1_Srinagar_Leh,avalanche,"Snowstorm closure, Srinagar-Leh","news report, Jan 2022"
+2022-02-18,2022-02-20,NH1_Srinagar_Leh,avalanche,"Avalanche near Gumri/Zoji La","news report, Feb 2022"
+2022-08-20,2022-08-22,NH3_Manali_Leh,landslide,"Monsoon landslides, multiple blockages","news report, Aug 2022"
+2023-01-30,2023-02-02,NH1_Srinagar_Leh,avalanche,"Heavy snow + avalanche risk closure","news report, Jan-Feb 2023"
+2023-07-15,2023-07-17,NH3_Manali_Leh,landslide,"Widespread monsoon damage to Himachal roads incl. Manali-Leh","news report, Jul 2023"
+2023-08-26,2023-08-28,NH3_Manali_Leh,landslide,"Landslide blockage near Manali end","news report, Aug 2023"
+2024-02-12,2024-02-14,NH1_Srinagar_Leh,avalanche,"Avalanche advisory + closure, Zoji La sector","news report, Feb 2024"
+2024-07-31,2024-08-02,NH3_Manali_Leh,landslide,"Monsoon flash flood/landslide closure","news report, Jul-Aug 2024"

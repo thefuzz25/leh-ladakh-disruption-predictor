@@ -44,5 +44,5 @@ def build_features(labels_df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 if __name__ == "__main__":
-    df = pd.read_csv("data/processed/synthetic_labels.csv")
+    df = pd.read_csv("data/processed/labels.csv")
     build_features(df)

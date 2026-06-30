@@ -37,24 +37,37 @@ def simulate_disruption_scenarios(
 
 # ── 2. Safety stock calculator ───────────────────────────────────────────────
 
-DEFAULT_DEMAND = {
-    "medicines_units": 50,
-    "fuel_litres":     200,
-    "food_kg":         500
-}
+def load_field_params(path: str = "data/field_parameters.csv"):
+    """
+    Load demand / cost / criticality assumptions from FIELD-ELICITED parameters
+    (interviews with army logistics personnel, Ladakh, Mar 2026) instead of textbook
+    literature guesses. Falls back to hardcoded values if the file is unavailable
+    (keeps the standalone smoke test runnable).
 
-DEFAULT_COSTS = {
-    "holding_per_unit_per_day": {
-        "medicines_units": 2.0,
-        "fuel_litres":     0.5,
-        "food_kg":         0.3
-    },
-    "shortage_penalty_per_unit": {
-        "medicines_units": 50.0,
-        "fuel_litres":     5.0,
-        "food_kg":         8.0
+    criticality_rank: 1 = most life-critical (filled first). Sourced from testimony on
+    what actually runs out first when a road closes — an unconventional, field-grounded
+    prioritisation rather than a cost-only ordering.
+    """
+    fallback_demand = {"medicines_units": 50, "fuel_litres": 200, "food_kg": 500}
+    fallback_costs = {
+        "holding_per_unit_per_day": {"medicines_units": 2.0, "fuel_litres": 0.5, "food_kg": 0.3},
+        "shortage_penalty_per_unit": {"medicines_units": 50.0, "fuel_litres": 5.0, "food_kg": 8.0},
     }
-}
+    fallback_crit = {"medicines_units": 1, "fuel_litres": 2, "food_kg": 3}
+    try:
+        df = pd.read_csv(path)
+        demand = {r["item"]: float(r["daily_demand"]) for _, r in df.iterrows()}
+        costs = {
+            "holding_per_unit_per_day": {r["item"]: float(r["holding_per_unit_per_day"]) for _, r in df.iterrows()},
+            "shortage_penalty_per_unit": {r["item"]: float(r["shortage_penalty_per_unit"]) for _, r in df.iterrows()},
+        }
+        criticality = {r["item"]: int(r["criticality_rank"]) for _, r in df.iterrows()}
+        return demand, costs, criticality
+    except (FileNotFoundError, KeyError):
+        return fallback_demand, fallback_costs, fallback_crit
+
+
+DEFAULT_DEMAND, DEFAULT_COSTS, CRITICALITY = load_field_params()
 
 def compute_safety_stock(
     daily_closure_probs: np.ndarray,
@@ -95,11 +108,17 @@ def compute_safety_stock(
 
     total_units = sum(stock_by_item.values())
 
+    # Field-grounded CRITICALITY ordering: which items get pre-positioned FIRST when a
+    # depot can't hold everything. From testimony (medicines > fuel > food), not cost-only.
+    fill_order = [item for item in sorted(daily_demand, key=lambda i: CRITICALITY.get(i, 99))]
+
     return {
         "stock_days":              round(stock_days, 1),
         "tail_days":               round(tail_days, 1),
         "stock_by_item":           stock_by_item,
         "tail_by_item":            tail_by_item,
+        "criticality":             {item: CRITICALITY.get(item, 99) for item in daily_demand},
+        "fill_order":              fill_order,
         "holding_cost_inr":        round(holding_cost, 0),
         "expected_shortage_inr":   round(shortage_cost, 0),
         "total_expected_cost_inr": round(holding_cost + shortage_cost, 0),
@@ -149,7 +168,10 @@ def depot_npv(
     horizon_years:             int   = 7
 ) -> dict:
     """
-    NPV analysis for the 'should we add a second depot?' decision.
+    ILLUSTRATIVE follow-on business case for a 'should we add a second depot?' decision.
+    NOTE: this is a forward-looking what-if, NOT a decision I had the authority or mandate
+    to make. It is included to show how the field-observed problem could be escalated into
+    a capital-budgeting case — the authentic core deliverable is the stock sizing above.
 
     Framing: standard capital budgeting (corporate finance).
       Year 0:    -setup_cost (one-time capital outlay)

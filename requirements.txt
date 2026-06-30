@@ -1,14 +1,9 @@
-pandas
-numpy
-scikit-learn
-xgboost
-shap
-folium
+# Deployed Streamlit app — slim runtime deps only (the app does NOT import
+# xgboost / scikit-learn / shap / openmeteo; those are offline-only, see requirements-dev.txt).
 streamlit
 streamlit-folium
+folium
+numpy
+pandas
 plotly
 numpy-financial
-openmeteo-requests
-requests-cache
-retry-requests
-joblib

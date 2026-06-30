@@ -1,0 +1,4 @@
+item,daily_demand,unit,holding_per_unit_per_day,shortage_penalty_per_unit,criticality_rank,source
+medicines_units,50,units,2.0,50.0,1,"elicited from army logistics personnel interviews, remote Ladakh border belt, Mar 2026 (small-sample, qualitative)"
+fuel_litres,200,litres,0.5,5.0,2,"elicited from army logistics personnel interviews, remote Ladakh border belt, Mar 2026 (small-sample, qualitative)"
+food_kg,500,kg,0.3,8.0,3,"elicited from army logistics personnel interviews, remote Ladakh border belt, Mar 2026 (small-sample, qualitative)"

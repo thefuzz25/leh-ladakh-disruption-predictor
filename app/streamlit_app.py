@@ -27,21 +27,15 @@ with st.sidebar:
 
 daily_demand = {"medicines_units": d_med, "fuel_litres": d_fuel, "food_kg": d_food}
 
+# Real model output: monthly closure probabilities precomputed offline from the trained
+# classifiers (src/models/precompute_app_probs.py). The live app reads genuine numbers —
+# no invented/random values.
 @st.cache_data(ttl=3600)
 def get_segment_probs(month: int) -> dict:
-    np.random.seed(month * 7)
-    if month in [10, 11, 12, 1, 2, 3]:
-        return {"Zoji_La": round(np.random.uniform(0.55, 0.85), 2),
-                "Rohtang_Pass": round(np.random.uniform(0.50, 0.80), 2)}
-    elif month in [4, 5, 9]:
-        return {"Zoji_La": round(np.random.uniform(0.25, 0.55), 2),
-                "Rohtang_Pass": round(np.random.uniform(0.20, 0.50), 2)}
-    elif month in [7, 8]:
-        return {"Zoji_La": round(np.random.uniform(0.15, 0.35), 2),
-                "Rohtang_Pass": round(np.random.uniform(0.30, 0.60), 2)}
-    else:
-        return {"Zoji_La": round(np.random.uniform(0.05, 0.20), 2),
-                "Rohtang_Pass": round(np.random.uniform(0.05, 0.20), 2)}
+    probs = pd.read_csv("app/precomputed_probs.csv")
+    row = probs[probs["month"] == month].iloc[0]
+    return {"Zoji_La": float(row["Zoji_La"]),
+            "Rohtang_Pass": float(row["Rohtang_Pass"])}
 
 seg_probs = get_segment_probs(month)
 avg_prob  = float(np.mean(list(seg_probs.values())))
@@ -89,12 +83,15 @@ col_s, col_t = st.columns(2)
 
 with col_s:
     st.subheader("Pre-positioning recommendation")
+    st.caption("Fill order = criticality from field interviews (what runs out first / "
+               "is life-critical), not cost — medicines before fuel before food.")
     rows = [
-        {"Item": k.replace("_"," ").title(),
-         "Daily demand": v,
+        {"Fill order": rec["fill_order"].index(k) + 1,
+         "Item": k.replace("_"," ").title(),
+         "Daily demand": daily_demand[k],
          "Stock (95th pct)": int(rec["stock_by_item"][k]),
          "Stock (tail avg)": int(rec["tail_by_item"][k])}
-        for k, v in daily_demand.items()
+        for k in rec["fill_order"]
     ]
     st.dataframe(pd.DataFrame(rows), hide_index=True, use_container_width=True)
 
@@ -105,8 +102,10 @@ with col_t:
 st.divider()
 
 # ── Section 4: Depot NPV (expandable) ────────────────────────────────────────
-with st.expander("Depot expansion analysis — NPV / IRR"):
-    st.write("Capital budgeting analysis: is a second forward depot worth building?")
+with st.expander("Illustrative follow-on business case — depot expansion NPV / IRR"):
+    st.info("Forward-looking what-if, **not** a decision I had the authority or mandate "
+            "to make. Shown to illustrate how the field-observed problem could be escalated "
+            "into a capital-budgeting case. The authentic deliverable is the stock sizing above.")
     col_i1, col_i2 = st.columns(2)
     setup = col_i1.number_input("Setup cost (₹)", value=2_500_000, step=100_000)
     redn  = col_i2.slider("Expected risk reduction", 10, 70, 40)
